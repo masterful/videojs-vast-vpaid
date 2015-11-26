@@ -498,8 +498,8 @@ describe("VASTClient", function () {
           '<VAST version="2.0"><Ad id="secondAd"></Ad></VAST>');
         this.clock.tick(1);
 
-        assertError(callback, 'on VASTClient.getVASTAd.validateAd, nor wrapper nor inline elements found on the Ad', 101);
-        assertErrorTrack('on VASTClient.getVASTAd.validateAd, nor wrapper nor inline elements found on the Ad', 101, ['firstAd', 'secondAd']);
+        assertError(callback, 'on VASTClient.getVASTAd.validateAd,  no wrapper, inline, or source element found on the Ad', 101);
+        assertErrorTrack('on VASTClient.getVASTAd.validateAd,  no wrapper, inline, or source element found on the Ad', 101, ['firstAd', 'secondAd']);
       });
 
       it("must return a 101 error to the callback and track it if one of the ads in the chain contains an inline with no creative", function(){
@@ -545,7 +545,7 @@ describe("VASTClient", function () {
           '<VAST version="2.0"><Ad id="adChain1"></Ad><Ad id="adChain2"><Wrapper><VASTAdTagURI><![CDATA[http://vastadtaguri.com]]></VASTAdTagURI><Error><![CDATA[http://t1.liverail.com/?metric=error&erc=[ERRORCODE]]]></Error></Wrapper></Ad></VAST>');
         this.clock.tick(1);
         //It must track the failed first error
-        assertErrorTrack("on VASTClient.getVASTAd.validateAd, nor wrapper nor inline elements found on the Ad", 101, ['adChain1']);
+        assertErrorTrack("on VASTClient.getVASTAd.validateAd,  no wrapper, inline, or source element found on the Ad", 101, ['adChain1']);
 
         requests[1].respond(200, {"Content-Type": "text"}, vastXML('<Ad id="adChain2.1"><InLine><Creatives><Creative><Linear>' +
           '<Duration>00:00:58</Duration>' +
@@ -569,7 +569,7 @@ describe("VASTClient", function () {
           '<VAST version="2.0"><Ad id="adChain1"></Ad><Ad id="adChain2"><Wrapper><VASTAdTagURI><![CDATA[http://vastadtaguri.com]]></VASTAdTagURI><Error><![CDATA[http://t1.liverail.com/?metric=error&erc=[ERRORCODE]]]></Error></Wrapper></Ad></VAST>');
         this.clock.tick(1);
         //It must track the failed first error
-        assertErrorTrack("on VASTClient.getVASTAd.validateAd, nor wrapper nor inline elements found on the Ad", 101, ['adChain1']);
+        assertErrorTrack("on VASTClient.getVASTAd.validateAd,  no wrapper, inline, or source element found on the Ad", 101, ['adChain1']);
 
         requests[1].respond(200, {"Content-Type": "text"}, vastXML('<Ad id="adChain2"><InLine><Creatives></Creatives></InLine></Ad>'));
         this.clock.tick(1);
@@ -587,7 +587,7 @@ describe("VASTClient", function () {
           '<VAST version="2.0"><Ad id="adChain1"></Ad><Ad id="adChain2"><Wrapper><VASTAdTagURI><![CDATA[http://vastadtaguri.com]]></VASTAdTagURI><Error><![CDATA[http://t1.liverail.com/?metric=error&erc=[ERRORCODE]]]></Error></Wrapper></Ad></VAST>');
         this.clock.tick(1);
         //It must track the failed first error
-        assertErrorTrack("on VASTClient.getVASTAd.validateAd, nor wrapper nor inline elements found on the Ad", 101, ['adChain1']);
+        assertErrorTrack("on VASTClient.getVASTAd.validateAd,  no wrapper, inline, or source element found on the Ad", 101, ['adChain1']);
 
         requests[1].respond(200, {"Content-Type": "text"}, vastXML('<Ad id="adChain2.1"><InLine><Creatives><Creative><Linear>' +
           '<Duration>00:00:58</Duration>' +
@@ -605,7 +605,7 @@ describe("VASTClient", function () {
 
     describe("_trackError", function(){
       var adChain;
-      
+
       beforeEach(function(){
         sinon.stub(vastUtil, 'track');
 
