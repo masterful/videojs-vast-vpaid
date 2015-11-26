@@ -13,4 +13,12 @@ function Ad(adJTree) {
   if(adJTree.wrapper){
     this.wrapper = new Wrapper(adJTree.wrapper);
   }
+
+  if(adJTree.prefix === 'vmap' && adJTree.adSource){
+    this.source = new AdSource(adJTree.adSource);
+
+    this.id = adJTree.adSource.attr('breakId');
+    this.type = adJTree.attr('breakType');
+    this.timeOffset = adJTree.attr('timeOffset');
+  }
 }

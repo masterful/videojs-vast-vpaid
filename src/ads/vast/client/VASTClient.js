@@ -89,6 +89,7 @@ VASTClient.prototype._getVASTAd = function (adTagUrl, callback) {
     var vastTree;
     try {
       vastTree = xml.toJXONTree(xmlStr);
+      if (vastTree.prefix === 'vmap') { vastTree.ad = vastTree.adBreak; }
       vastTree.ads = isArray(vastTree.ad) ? vastTree.ad : [vastTree.ad];
       callback(validateVASTTree(vastTree), vastTree);
     } catch (e) {
@@ -103,8 +104,12 @@ VASTClient.prototype._getVASTAd = function (adTagUrl, callback) {
       return new VASTError('on VASTClient.getVASTAd.validateVASTTree, no Ad in VAST tree', 303);
     }
 
-    if (vastVersion && (vastVersion != 3 && vastVersion != 2)) {
+    if (vastVersion && (vastTree.prefix !== 'vmap' && vastVersion != 3 && vastVersion != 2)) {
       return new VASTError('on VASTClient.getVASTAd.validateVASTTree, not supported VAST version "' + vastVersion + '"', 102);
+    }
+
+    if (vastVersion && (vastTree.prefix === 'vmap' && vastVersion != 1 && vastVersion != 2)) {
+      return new VASTError('on VASTClient.getVASTAd.validateVASTTree, not supported VMAP version "' + vastVersion + '"', 102);
     }
 
     return null;
@@ -137,6 +142,10 @@ VASTClient.prototype._getVASTAd = function (adTagUrl, callback) {
         return getAd(ad.wrapper.VASTAdTagURI, adChain, callback);
       }
 
+      if (ad.source) {
+        return getAd(ad.source.VASTAdTagURI, adChain, callback);
+      }
+
       return callback(null, adChain);
     });
   }
@@ -153,14 +162,15 @@ VASTClient.prototype._getVASTAd = function (adTagUrl, callback) {
   function validateAd(ad) {
     var wrapper = ad.wrapper;
     var inLine = ad.inLine;
+    var source = ad.source;
     var errMsgPrefix = 'on VASTClient.getVASTAd.validateAd, ';
 
     if (inLine && wrapper) {
       return new VASTError(errMsgPrefix +"InLine and Wrapper both found on the same Ad", 101);
     }
 
-    if (!inLine && !wrapper) {
-      return new VASTError(errMsgPrefix + "nor wrapper nor inline elements found on the Ad", 101);
+    if (!inLine && !wrapper && !source) {
+      return new VASTError(errMsgPrefix + " no wrapper, inline, or source element found on the Ad", 101);
     }
 
     if (inLine && inLine.creatives.length === 0) {
@@ -169,6 +179,10 @@ VASTClient.prototype._getVASTAd = function (adTagUrl, callback) {
 
     if (wrapper && !wrapper.VASTAdTagURI) {
       return new VASTError(errMsgPrefix + "missing 'VASTAdTagURI' in wrapper", 101);
+    }
+
+    if (source && !source.VASTAdTagURI) {
+      return new VASTError(errMsgPrefix + "missing 'VASTAdTagURI' in source", 101);
     }
   }
 

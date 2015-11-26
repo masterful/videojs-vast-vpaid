@@ -73,6 +73,7 @@
     "Ad":true,
     "Linear":true,
     "Wrapper":true,
+    "AdSource":true,
     "VASTResponse":true,
     "TrackingEvent":true,
     "Creative":true,

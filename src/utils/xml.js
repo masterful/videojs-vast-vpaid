@@ -61,7 +61,7 @@ xml.JXONTree = function JXONTree (oXMLParent) {
   //The document object is an especial object that it may miss some functions or attrs depending on the browser.
   //To prevent this problem with create the JXONTree using the root childNode which is a fully fleshed node on all supported
   //browsers.
-  if(oXMLParent.documentElement){
+  if (oXMLParent.documentElement) {
     return new xml.JXONTree(oXMLParent.documentElement);
   }
 
@@ -71,8 +71,8 @@ xml.JXONTree = function JXONTree (oXMLParent) {
       oNode = oXMLParent.childNodes.item(nItem);
       /*jshint bitwise: false*/
       if ((oNode.nodeType - 1 | 1) === 3) { sCollectedTxt += oNode.nodeType === 3 ? oNode.nodeValue.trim() : oNode.nodeValue; }
-      else if (oNode.nodeType === 1 && !oNode.prefix) {
-        sProp = decapitalize(oNode.nodeName);
+      else if (oNode.nodeType === 1) {
+        sProp = decapitalize(oNode.localName);
         vContent = new xml.JXONTree(oNode);
         if (this.hasOwnProperty(sProp)) {
           if (this[sProp].constructor !== Array) { this[sProp] = [this[sProp]]; }
@@ -92,6 +92,7 @@ xml.JXONTree = function JXONTree (oXMLParent) {
       this["@" + decapitalize(oAttrib.name)] = parseText(oAttrib.value.trim());
     }
   }
+  this.prefix = oXMLParent.prefix && decapitalize(oXMLParent.prefix);
 };
 
 xml.JXONTree.prototype.attr = function(attr) {
