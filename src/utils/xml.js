@@ -72,7 +72,7 @@ xml.JXONTree = function JXONTree (oXMLParent) {
       /*jshint bitwise: false*/
       if ((oNode.nodeType - 1 | 1) === 3) { sCollectedTxt += oNode.nodeType === 3 ? oNode.nodeValue.trim() : oNode.nodeValue; }
       else if (oNode.nodeType === 1) {
-        sProp = decapitalize(oNode.localName);
+        sProp = decapitalize(oNode.localName || oNode.nodeName);
         vContent = new xml.JXONTree(oNode);
         if (this.hasOwnProperty(sProp)) {
           if (this[sProp].constructor !== Array) { this[sProp] = [this[sProp]]; }
